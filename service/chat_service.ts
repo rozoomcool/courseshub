@@ -1,7 +1,5 @@
 import { Chat, Message, MessageStatus, PrismaClient } from '@prisma/client';
 import prisma from '../config/database'
-import { UserModel } from '../model/user';
-import { userService } from './user_service'
 
 interface CreateChatParams {
     userOneId: number

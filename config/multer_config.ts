@@ -9,16 +9,29 @@ const SERVER_URL = process.env.SERVER_URL;
 const UPLOADS_DIR = process.env.UPLOADS_DIR;
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: function (req, file, cb) {
     cb(null, __dirname + `/../${UPLOADS_DIR}`);
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter: function (req, file, cb) {
+    const fileTypes = /jpeg|jpg|png|gif|mp4|avi|mov|mkv/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimeType = fileTypes.test(file.mimetype);
+
+    if (extname && mimeType) {
+      return cb(null, true);
+    } else {
+      cb(Error('Error: Images and Videos only!'));
+    }
+  }
+});
 
 const imageFileFilter = (req: any, file: any, cb: any) => {
   

@@ -104,22 +104,44 @@ enum ProjectStatus {
 }
 
 model Course {
-  id Int @id @default(autoincrement())
-  title String
+  id          Int       @id @default(autoincrement())
+  title       String
   description String
-  price Float @default(0)
-  sections Section[]
+  price       Float     @default(0)
+  previewUrl  String
+  sections    Section[]
 }
 
 model Section {
-  id Int @id @default(autoincrement())
-  course    Course    @relation(fields: [courseId], references: [id])
+  id       Int      @id @default(autoincrement())
+  course   Course   @relation(fields: [courseId], references: [id])
   courseId Int
-  lessons Lesson[]
+  lessons  Lesson[]
 }
 
 model Lesson {
-  id Int @id @default(autoincrement())
-  section Section @relation(fields: [sectionId], references: [id])
-  sectionId Int
+  id           Int           @id @default(autoincrement())
+  section      Section       @relation(fields: [sectionId], references: [id])
+  sectionId    Int
+  stages       Stage[]
+  lessonMedias LessonMedia[]
+}
+
+model Stage {
+  id       Int       @id @default(autoincrement())
+  type     StageType
+  lesson   Lesson    @relation(fields: [lessonId], references: [id])
+  lessonId Int
+}
+
+enum StageType {
+  LECTURE
+  TEST
+}
+
+model LessonMedia {
+  id       Int    @id @default(autoincrement())
+  url      String
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
 }

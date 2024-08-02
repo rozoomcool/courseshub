@@ -43,20 +43,23 @@ userRouter.get('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// userRouter.put('/:id', authMiddleware, async (req, res) => {
-//     const { id } = req.params;
-//     const data = req.body;
-//     try {
-//         const user = await userService.updateUser(Number(id), data);
-//         res.json(user);
-//     } catch (error) {
-//         if (error instanceof Error) {
-//             res.status(400).json({ error: error.message });
-//         } else {
-//             res.status(400).json({ error: 'An unexpected error occurred' });
-//         }
-//     }
-// });
+userRouter.put('/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    try {
+        const user = await userService.updateUser({
+            id: Number(id),
+            avatarUrl: data.avatarUrl
+        });
+        res.json(user);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(400).json({ error: 'An unexpected error occurred' });
+        }
+    }
+});
 
 userRouter.delete('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;

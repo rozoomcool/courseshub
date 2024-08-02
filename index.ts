@@ -3,6 +3,7 @@ import prisma from './config/database';
 import { userRouter } from './controller/user_controller'
 import dotenv from 'dotenv';
 import { authRouter } from './controller/auth_controller';
+import { sectionRouter } from './controller/section_controller';
 import http from 'http';
 import { setupSocket } from './websocket/websocket';
 import { Server } from 'socket.io';
@@ -36,6 +37,7 @@ app.use(express.json());
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/sections", sectionRouter);
 
 setupSocket(io)
 
