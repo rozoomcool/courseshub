@@ -41,7 +41,7 @@ setupSocket(io)
 
 async function main() {
     server.listen(PORT, async () => {
-        console.log(`Example app listening on port ${PORT}`)
+        console.log(`Courses app listening on port ${PORT}`)
     })
 }
 

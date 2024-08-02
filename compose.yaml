@@ -3,6 +3,8 @@ services:
   web:
     build: .
     command: npm run dev
+    networks:
+      - mynetwork
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
@@ -10,11 +12,16 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
-    environment:
-      DATABASE_URL: postgres://todoapp@postgres/todos
+    env-file: ".env"
   postgres:
     image: postgres:latest
+    networks:
+      - mynetwork
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: courses
       POSTGRES_PASSWORD: root
+
+networks:
+  mynetwork:
+    driver: bridge
