@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon index.ts",
-    "start": "npx tsx index.ts --host 0.0.0.0 --port 3000",
+    "start": "npx tsx index.ts --host 0.0.0.0 --port 3000 & npx prisma generate & npx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

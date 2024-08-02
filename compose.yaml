@@ -14,16 +14,25 @@ services:
       - mynetwork
     # env-file: ".env"
   db:
+    container_name: db
     image: postgres:latest
+    restart: always
     ports:
-      - "5432:5432"
+      - "5430:5432"
     environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: postgres
       POSTGRES_DB: courses
       POSTGRES_PASSWORD: root
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
     networks:
       - mynetwork
 
 networks:
   mynetwork:
     driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
