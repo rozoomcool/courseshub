@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int             @id @default(autoincrement())
+  username    String          @unique
+  password    String
+  role        Role            @default(USER)
+  avatarUrl   String?
+  chats       Chat[]          @relation("UserChats")
+  messages    Message[]       @relation("SentMessages")
+  projects    Project[]       @relation("UserProjects")
+  memberships ProjectMember[] @relation("UserMemberships")
+  userData    Profile?
+}
+
+model Profile {
+  id          Int     @id @default(autoincrement())
+  firstname   String?
+  lastname    String?
+  surname     String?
+  professtion String?
+  telegram    String?
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int     @unique
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+model Chat {
+  id           Int       @id @default(autoincrement())
+  type         ChatType  @default(PRIVATE)
+  name         String?
+  participants User[]    @relation("UserChats")
+  messages     Message[]
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+}
+
+enum MessageStatus {
+  DELIVERED
+  SENDED
+  READED
+  ERROR
+}
+
+enum ChatType {
+  GRPOUP
+  PRIVATE
+}
+
+model Message {
+  id        Int           @id @default(autoincrement())
+  sender    User          @relation("SentMessages", fields: [senderId], references: [id])
+  senderId  Int
+  chat      Chat          @relation(fields: [chatId], references: [id])
+  chatId    Int
+  content   String
+  status    MessageStatus @default(SENDED)
+  createdAt DateTime      @default(now()) @db.Timestamptz(3)
+
+  @@index([senderId])
+  @@index([chatId])
+}
+
+model Project {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String
+  readme      String
+  status      ProjectStatus   @default(NEW)
+  owner       User            @relation("UserProjects", fields: [ownerId], references: [id])
+  ownerId     Int
+  members     ProjectMember[]
+  createdAt   DateTime        @default(now()) @db.Timestamptz(3)
+}
+
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
+  user      User     @relation("UserMemberships", fields: [userId], references: [id])
+  userId    Int
+  role      String   @default("Чернорабочий")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([projectId, userId])
+}
+
+enum ProjectStatus {
+  NEW
+  ONGOING
+  COMPLETED
+  WON
+}
