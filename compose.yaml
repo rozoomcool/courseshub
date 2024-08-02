@@ -13,7 +13,7 @@ services:
     networks:
       - mynetwork
     # env-file: ".env"
-  postgres:
+  db:
     image: postgres:latest
     ports:
       - "5432:5432"
