@@ -3,8 +3,6 @@ services:
   web:
     build: .
     command: npm run start
-    networks:
-      - mynetwork
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
@@ -12,17 +10,19 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
+    networks:
+      - mynetwork
     # env-file: ".env"
   postgres:
     image: postgres:latest
-    networks:
-      - mynetwork
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: courses
       POSTGRES_PASSWORD: root
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:

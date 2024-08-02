@@ -5,3 +5,5 @@ RUN npm install --quiet
 COPY . .
 
 RUN npx prisma migrate dev
+
+EXPOSE 3000
