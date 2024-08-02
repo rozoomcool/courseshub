@@ -4,3 +4,4 @@ COPY package.json .
 RUN npm install --quiet
 COPY . .
 
+RUN npx prisma migrate dev
