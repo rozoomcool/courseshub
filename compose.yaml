@@ -12,7 +12,7 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
-    env-file: ".env"
+    # env-file: ".env"
   postgres:
     image: postgres:latest
     networks:
