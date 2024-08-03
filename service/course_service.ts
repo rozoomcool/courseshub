@@ -1,5 +1,6 @@
 import { Course, Prisma, PrismaClient } from "@prisma/client";
 import prisma from '../config/database';
+import { MulterUtil } from "../config/multer_config";
 
 class CourseService {
   private prisma: PrismaClient;
@@ -8,7 +9,9 @@ class CourseService {
     this.prisma = prismaClient;
   }
 
-  async createCourse(data: Omit<Course & {filename: string}, 'id'>): Promise<Course> {
+  async createCourse(data: Omit<Course & {file: Express.Multer.File}, 'id'>): Promise<Course> {
+    const previewUrl = await MulterUtil.updateMedia(null, data.file!.filename);
+    data.previewUrl = previewUrl;
     return await this.prisma.course.create({
       data,
     });

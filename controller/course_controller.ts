@@ -2,11 +2,12 @@ import express, { Request, Response } from 'express';
 import {courseService} from '../service/course_service';
 import { authMiddleware } from '../middleware/auth_middleware';
 import { Role } from '@prisma/client';
+import upload from '../config/multer_config';
 
 export const courseRouter = express.Router();
 
 // Create a new course
-courseRouter.post('/', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+courseRouter.post('/', upload.single("preview"), authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const ownerId = req.user.id;
     req.body.ownerId = ownerId;
