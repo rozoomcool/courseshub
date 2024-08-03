@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - migrate
     networks:
       - mynetwork
     # env-file: ".env"
@@ -29,6 +29,18 @@ services:
       # - ./pgdata:/var/lib/postgresql/data/pgdata
     networks:
       - mynetwork
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "npx prisma migrate deploy"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - .:/app
   nginx:
     image: nginx:latest
     volumes:
