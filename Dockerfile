@@ -3,8 +3,9 @@ WORKDIR /usr/app
 COPY package.json .
 RUN npm install --quiet
 COPY . .
-# COPY prisma ./prisma/
+COPY prisma ./prisma/
 
-# RUN npx prisma migrate dev
+RUN npx prisma generate
+RUN npx prisma migrate dev
 
 EXPOSE 3000
