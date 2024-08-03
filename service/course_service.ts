@@ -1,4 +1,4 @@
-import { Course, Prisma, PrismaClient } from "@prisma/client";
+import { Course, Prisma, PrismaClient, Section } from "@prisma/client";
 import prisma from '../config/database';
 import { MulterUtil } from "../config/multer_config";
 
@@ -48,10 +48,26 @@ class CourseService {
     });
   }
 
-  async updateCourse(id: number, data: Partial<Course>): Promise<Course> {
+  async updateCourse(id: number, params: Partial<Course & {file: Express.Multer.File} & {sections: Section[]}>): Promise<Course> {
+
+    const oldCourse = (await this.getCourseById(id));
+    if (!oldCourse) {
+      throw Error("Course not founded")
+    }
+    let previewUrl: string | null = oldCourse.previewUrl;
+    if (params.file) {
+      previewUrl = await MulterUtil.updateMedia(oldCourse.previewUrl, params.file.filename);
+    }
+
     return await this.prisma.course.update({
       where: { id },
-      data,
+      data: {
+        title: params.title ?? oldCourse.title,
+        description: params.description ?? oldCourse.description,
+        price: params.price ?? oldCourse.price,
+        enabled: params.enabled ?? oldCourse.enabled,
+        previewUrl: previewUrl ? oldCourse.previewUrl
+      }
     });
   }
 

@@ -34,7 +34,7 @@ courseRouter.get('/:id', authMiddleware(), async (req: Request, res: Response) =
 });
 
 // Get all courses with filters
-courseRouter.get('/', authMiddleware(), async (req: Request, res: Response) => {
+courseRouter.get('/', async (req: Request, res: Response) => {
   try {
     const course = await courseService.getAll(req.query);
     if (!course) {
@@ -48,7 +48,7 @@ courseRouter.get('/', authMiddleware(), async (req: Request, res: Response) => {
 });
 
 // Update a course by ID
-courseRouter.put('/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+courseRouter.put('/:id', upload.single("preview"), authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const courseId = parseInt(req.params.id);
     const course = await courseService.updateCourse(courseId, req.body);
