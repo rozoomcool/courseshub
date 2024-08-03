@@ -5,7 +5,7 @@ import upload from "../config/multer_config";
 
 export const userRouter = Router();
 
-userRouter.get('/', authMiddleware(), async (req, res) => {
+userRouter.get('/', async (req, res) => {
     const users = await userService.getUsers();
     res.json(users);
 });

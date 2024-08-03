@@ -10,7 +10,7 @@ export const courseRouter = express.Router();
 courseRouter.post('/', upload.single("preview"), authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const ownerId = req.user.id;
-    req.body.ownerId = ownerId;
+    req.body.ownerId = Number(ownerId);
     const course = await courseService.createCourse({...req.body, file: req.file});
     res.status(201).json(course);
   } catch (error) {

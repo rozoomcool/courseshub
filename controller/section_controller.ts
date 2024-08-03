@@ -8,7 +8,7 @@ export const sectionRouter = Router();
 // Create a new section
 sectionRouter.post('/sections', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
-    const section = await sectionService.createSection(req.body);
+    const section = await sectionService.createSection(req.user.id, req.body);
     res.status(201).json(section);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create section' });

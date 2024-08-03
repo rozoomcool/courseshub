@@ -12,14 +12,22 @@ class CourseService {
   async createCourse(params: Omit<Course & {file: Express.Multer.File}, 'id'>): Promise<Course> {
     const previewUrl = await MulterUtil.updateMedia(null, params.file!.filename);
     params.previewUrl = previewUrl;
+    console.log(params.ownerId)
     return await this.prisma.course.create({
       data: {
-        ownerId: params.ownerId,
+        owner: {
+          connect: {
+            id: Number(params.ownerId)
+          }
+        },
         title: params.title,
         description: params.description,
         previewUrl: params.previewUrl,
-        price: params.price ?? 0
+        price: params.price ? Number(params.price) : 0
       },
+      include: {
+        sections: true
+      }
     });
   }
 
@@ -66,7 +74,7 @@ class CourseService {
         description: params.description ?? oldCourse.description,
         price: params.price ?? oldCourse.price,
         enabled: params.enabled ?? oldCourse.enabled,
-        previewUrl: previewUrl ? oldCourse.previewUrl
+        previewUrl: previewUrl ?? oldCourse.previewUrl
       }
     });
   }

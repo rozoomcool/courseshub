@@ -9,10 +9,21 @@ class SectionService {
         this.prisma = prismaClient;
     }
 
-    async createSection(data: Omit<Section, 'id'>): Promise<Section> {
-        return await this.prisma.section.create({
-            data,
-        });
+    async createSection(userId: number, params: Omit<Section, 'id'>): Promise<Section> {
+        const course = await this.prisma.course.findUnique({where: {id: params.courseId, ownerId: userId}});
+        const isCan = course && course!.ownerId == userId;
+        if (isCan) {
+            return await this.prisma.section.create({
+                data: {
+                    title: params.title,
+                    course: {
+                        connect: {id: course.id}
+                    }
+                },
+            });
+        } else {
+            throw Error("Permission denied");
+        }
     }
 
     async getSectionById(id: number): Promise<Section | null> {
