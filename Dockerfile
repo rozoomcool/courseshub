@@ -5,6 +5,7 @@ RUN npm install --quiet
 COPY . .
 # COPY prisma ./prisma/
 
-# RUN npx prisma generate
+RUN npm run prisma:generate
+RUN npm run prisma:migrate
 
 EXPOSE 3000
