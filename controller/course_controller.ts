@@ -11,9 +11,10 @@ courseRouter.post('/', upload.single("preview"), authMiddleware(Role.TEACHER), a
   try {
     const ownerId = req.user.id;
     req.body.ownerId = ownerId;
-    const course = await courseService.createCourse(req.body);
+    const course = await courseService.createCourse({...req.body, file: req.file});
     res.status(201).json(course);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Failed to create course' });
   }
 });
