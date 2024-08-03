@@ -28,7 +28,7 @@ const io = new Server(server, {
   });
 
 const corsOptions = {
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true
 }
 
