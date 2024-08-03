@@ -6,6 +6,7 @@ services:
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
+      - uploads:/usr/app/uploads
     ports:
       - "3000:3000"
     depends_on:
@@ -36,3 +37,4 @@ networks:
 volumes:
   pgdata:
     driver: local
+  uploads:
