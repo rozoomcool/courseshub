@@ -78,16 +78,18 @@ class UserService {
             throw Error("User not found exception");
         }
 
-        let newAvatar: string | null = user.avatarUrl;
+        const newAvatar = await MulterUtil.updateMedia(user.avatarUrl, params.avatarUrl);
+
+        // let newAvatar: string | null = user.avatarUrl;
         
-        if (params.avatarUrl != user.avatarUrl) {
-            if (user.avatarUrl != null) {
-                console.log("....");
-                MulterUtil.deleteImage(user.avatarUrl!);
-            }
-            newAvatar = path.join(SERVER_URL, UPLOADS_DIR, params.avatarUrl);
-        }
-        console.log(`::: ${newAvatar}`)
+        // if (params.avatarUrl != user.avatarUrl) {
+        //     if (user.avatarUrl != null) {
+        //         console.log("....");
+        //         MulterUtil.deleteImage(user.avatarUrl!);
+        //     }
+        //     newAvatar = path.join(SERVER_URL, UPLOADS_DIR, params.avatarUrl);
+        // }
+        // console.log(`::: ${newAvatar}`)
 
         const entity = await this.prisma.user.update({
             where: {

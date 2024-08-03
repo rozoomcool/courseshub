@@ -2,7 +2,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { UPLOAD_PATH } from './config';
+import { SERVER_URL, UPLOAD_PATH, UPLOADS_DIR } from './config';
 
 dotenv.config();
 
@@ -53,6 +53,19 @@ export class MulterUtil {
       console.log(e);
       // throw Error(":: MulterUtil - Failed to delete file");
     }
+  }
+
+  static async updateMedia(oldUrl: string | null, newName: string | null): Promise<string> {
+    if (oldUrl) {
+      await this.deleteImage(oldUrl!);
+    }
+    if (newName) {
+      const mediaUrl = path.join(SERVER_URL, UPLOADS_DIR, newName!);
+      return mediaUrl;
+    } else {
+      throw Error("Failed update media");
+    }
+
   }
 }
 

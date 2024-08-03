@@ -84,6 +84,7 @@ userRouter.post("/avatar", upload.single("avatar"), authMiddleware(), async (req
         const entity = await userService.updateUser({id: req.user.id, avatarUrl: req.file!.filename});
         return res.status(200).json(entity);
     } catch (e) {
+        console.log(e);
         return res.status(400).json(e);
     }
 });
