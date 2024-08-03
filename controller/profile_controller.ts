@@ -19,7 +19,7 @@ profileRoute.get("/:id", async (req, res) => {
     }
 });
 
-profileRoute.get("/", authMiddleware(), async (req, res) => {
+profileRoute.get("/", async (req, res) => {
     try {
         const id = req.user.id;
         const data = await profileService.getProfileByUserId(id);
