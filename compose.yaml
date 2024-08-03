@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
-      - /uploads:/usr/app/uploads
+      - ./uploads:/usr/app/uploads
     ports:
       - "3000:3000"
     depends_on:
@@ -29,6 +29,17 @@ services:
       - ./pgdata:/var/lib/postgresql/data/pgdata
     networks:
       - mynetwork
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./uploads:/app/uploads
+    ports:
+      - "80:80"
+    networks:
+      - mynetwork
+    depends_on:
+      - node_app
 
 networks:
   mynetwork:
