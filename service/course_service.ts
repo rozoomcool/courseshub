@@ -8,7 +8,7 @@ class CourseService {
     this.prisma = prismaClient;
   }
 
-  async createCourse(data: Omit<Course, 'id'>): Promise<Course> {
+  async createCourse(data: Omit<Course & {filename: string}, 'id'>): Promise<Course> {
     return await this.prisma.course.create({
       data,
     });
