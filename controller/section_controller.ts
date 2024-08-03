@@ -1,56 +1,52 @@
 import { Router, Request, Response } from 'express';
 import { Role, StageType } from '@prisma/client';
-import { stageService } from '../service/stage_service';
+import { sectionService } from '../service/section_service';
 import { authMiddleware } from '../middleware/auth_middleware';
 
 export const sectionRouter = Router();
 
-// Create a new stage
-sectionRouter.post('/stages', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+// Create a new section
+sectionRouter.post('/sections', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
-    const { type, lessonId } = req.body;
-    const stage = await stageService.createStage({
-      type: type as StageType,
-      lessonId: parseInt(lessonId),
-    });
-    res.status(201).json(stage);
+    const section = await sectionService.createSection(req.body);
+    res.status(201).json(section);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create stage' });
+    res.status(500).json({ error: 'Failed to create section' });
   }
 });
 
-// Get a stage by ID
-sectionRouter.get('/stages/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+// Get a section by ID
+sectionRouter.get('/sections/:id', async (req: Request, res: Response) => {
   try {
-    const stageId = parseInt(req.params.id);
-    const stage = await stageService.getStageById(stageId);
-    if (!stage) {
-      return res.status(404).json({ error: 'Stage not found' });
+    const sectionId = parseInt(req.params.id);
+    const section = await sectionService.getSectionById(sectionId);
+    if (!section) {
+      return res.status(404).json({ error: 'Section not found' });
     }
-    res.json(stage);
+    res.json(section);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get stage' });
+    res.status(500).json({ error: 'Failed to get section' });
   }
 });
 
-// Update a stage by ID
-sectionRouter.put('/stages/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+// Update a section by ID
+sectionRouter.put('/sections/:id', async (req: Request, res: Response) => {
   try {
-    const stageId = parseInt(req.params.id);
-    const stage = await stageService.updateStage(stageId, req.body);
-    res.json(stage);
+    const sectionId = parseInt(req.params.id);
+    const section = await sectionService.updateSection(sectionId, req.body);
+    res.json(section);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update stage' });
+    res.status(500).json({ error: 'Failed to update section' });
   }
 });
 
-// Delete a stage by ID
-sectionRouter.delete('/stages/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+// Delete a section by ID
+sectionRouter.delete('/sections/:id', async (req: Request, res: Response) => {
   try {
-    const stageId = parseInt(req.params.id);
-    await stageService.deleteStage(stageId);
+    const sectionId = parseInt(req.params.id);
+    await sectionService.deleteSection(sectionId);
     res.status(204).end();
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete stage' });
+    res.status(500).json({ error: 'Failed to delete section' });
   }
 });

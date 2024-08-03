@@ -33,7 +33,7 @@ courseRouter.get('/:id', authMiddleware(), async (req: Request, res: Response) =
   }
 });
 
-// Get a course by ID
+// Get all courses with filters
 courseRouter.get('/', authMiddleware(), async (req: Request, res: Response) => {
   try {
     const course = await courseService.getAll(req.query);

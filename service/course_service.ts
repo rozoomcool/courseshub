@@ -32,16 +32,18 @@ class CourseService {
     });
   }
 
-  async getAll(params: Partial<Omit<Course, "ownerId">> & Partial<{ take: string, skip: string, ownerId: string, allData: string }>): Promise<Course[]> {
+  async getAll(
+    params: Partial<Omit<Course, "ownerId">> & Partial<{ take: string; skip: string; ownerId: string; allData: string }>
+  ): Promise<Course[]> {
     return await this.prisma.course.findMany({
       where: {
-        ownerId: Number(params.ownerId),
-        title: params.title
+        ...(params.ownerId && { ownerId: Number(params.ownerId) }), // Фильтр по ownerId, если он передан
+        ...(params.title && { title: params.title }), // Фильтр по title, если он передан
       },
-      skip: Number(params.skip),
-      take: Number(params.take),
+      skip: params.skip ? Number(params.skip) : undefined, // Пропускаем, если параметр skip не передан
+      take: params.take ? Number(params.take) : undefined, // Берем все, если параметр take не передан
       include: {
-        sections: Boolean(params.allData)
+        sections: params.allData === "true" // Включаем секции, если allData равен "true"
       },
     });
   }
