@@ -28,7 +28,7 @@ const io = new Server(server, {
   });
 
 const corsOptions = {
-    origin: 'http://localhost:3000/',
+    origin: '*',
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true
