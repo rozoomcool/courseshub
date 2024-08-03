@@ -37,6 +37,8 @@ services:
       sh -c "npx prisma migrate deploy"
     environment:
       - NODE_ENV=production
+    networks:
+      - mynetwork
     depends_on:
       - db
     volumes:
