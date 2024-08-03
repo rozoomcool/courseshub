@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
-      - uploads:/usr/app/uploads
+      - /uploads:/usr/app/uploads
     ports:
       - "3000:3000"
     depends_on:
