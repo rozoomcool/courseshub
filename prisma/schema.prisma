@@ -18,6 +18,7 @@ model User {
   projects    Project[]       @relation("UserProjects")
   memberships ProjectMember[] @relation("UserMemberships")
   userData    Profile?
+  courses Course[]
 }
 
 model Profile {
@@ -110,6 +111,8 @@ model Course {
   price       Float     @default(0)
   previewUrl  String
   sections    Section[]
+  owner User @relation(fields: [ownerId], references: [id])
+  ownerId Int
 }
 
 model Section {
@@ -121,6 +124,7 @@ model Section {
 
 model Lesson {
   id           Int           @id @default(autoincrement())
+  title String
   section      Section       @relation(fields: [sectionId], references: [id])
   sectionId    Int
   stages       Stage[]

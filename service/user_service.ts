@@ -4,11 +4,8 @@ import { UserModel } from '../model/user';
 import { PrismaClient, User } from '@prisma/client';
 import dotenv from 'dotenv';
 import { MulterUtil } from '../config/multer_config';
-
-dotenv.config();
-
-const SERVER_URL = process.env.SERVER_URL;
-const UPLOADS_DIR = process.env.UPLOADS_DIR;
+import path from 'path';
+import {SERVER_URL, UPLOADS_DIR} from '../config/config';
 
 interface UpdateUserParams {
     id: number;
@@ -31,13 +28,14 @@ class UserService {
         this.prisma = prismaClient;
     }
 
-    async createUser(user: UserModel) {
-        const {username, password} = user
+    async createUser(user: Omit<User, 'id'>) {
+        const {username, password, role} = user
         const hashed = bcrypt.hashSync(password, 10);
         return await this.prisma.user.create({
             data: {
                 username,
-                password: hashed
+                password: hashed,
+                role
             }
         });
     }
@@ -79,25 +77,28 @@ class UserService {
         if (user == null) {
             throw Error("User not found exception");
         }
+
+        let newAvatar: string | null = user.avatarUrl;
         
         if (params.avatarUrl != user.avatarUrl) {
             if (user.avatarUrl != null) {
+                console.log("....");
                 MulterUtil.deleteImage(user.avatarUrl!);
             }
-            user.avatarUrl = `${SERVER_URL}/${params.avatarUrl}`;
+            newAvatar = path.join(SERVER_URL, UPLOADS_DIR, params.avatarUrl);
         }
+        console.log(`::: ${newAvatar}`)
 
-        this.prisma.user.update({
+        const entity = await this.prisma.user.update({
             where: {
                 id: user.id
             },
             data: {
-                username: params.username ?? user.username,
-                avatarUrl: params.avatarUrl ?? user.avatarUrl
+                avatarUrl: newAvatar
             }
         })
         
-        return user;
+        return entity;
     }
 }
 

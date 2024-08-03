@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ProfileUpdateParams, profileService } from "../service/profile_service";
 import { authMiddleware } from "../middleware/auth_middleware";
+import { Profile } from "@prisma/client";
 
 export const profileRoute = Router();
 
@@ -18,7 +19,7 @@ profileRoute.get("/:id", async (req, res) => {
     }
 });
 
-profileRoute.get("/", authMiddleware, async (req, res) => {
+profileRoute.get("/", authMiddleware(), async (req, res) => {
     try {
         const id = req.user.id;
         const data = await profileService.getProfileByUserId(id);
@@ -32,10 +33,10 @@ profileRoute.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-profileRoute.put("/", authMiddleware, async (req, res) => {
+profileRoute.put("/", authMiddleware(), async (req, res) => {
     try {
         const id = req.user.id;
-        const data = req.body as ProfileUpdateParams;
+        const data = req.body as Partial<Omit<Profile, "id">>;
         data.userId = id;
         const result = await profileService.updateProfile(data);
         return res.json(result);

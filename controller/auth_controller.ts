@@ -4,12 +4,13 @@ import { userService } from '../service/user_service';
 import { AuthPayloadContext, JwtService } from '../service/jwt_service';
 import { omit } from '../utils/utils';
 import { profileService } from '../service/profile_service';
+import { User } from '@prisma/client';
 
 export const authRouter = Router()
 
 authRouter.post('/register', async (req, res) => {
     try {
-        const user = req.body as UserModel;
+        const user = req.body as Omit<User, "id">;
         const created = await userService.createUser(user);
         const profile = await profileService.saveProfile(created.id)
         return res.status(201).json(created);

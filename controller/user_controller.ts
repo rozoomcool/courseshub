@@ -19,12 +19,12 @@ export const userRouter = Router();
 //     }
 // });
 
-userRouter.get('/', authMiddleware, async (req, res) => {
+userRouter.get('/', authMiddleware(), async (req, res) => {
     const users = await userService.getUsers();
     res.json(users);
 });
 
-userRouter.get('/me', authMiddleware, async (req, res) => {
+userRouter.get('/me', authMiddleware(), async (req, res) => {
     try {
         const users = await userService.getUserById(req.user.id);
         res.json(users);
@@ -33,7 +33,7 @@ userRouter.get('/me', authMiddleware, async (req, res) => {
     }
 });
 
-userRouter.get('/:id', authMiddleware, async (req, res) => {
+userRouter.get('/:id', authMiddleware(), async (req, res) => {
     const { id } = req.params;
     const user = await userService.getUserById(Number(id));
     if (user) {
@@ -43,7 +43,7 @@ userRouter.get('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-userRouter.put('/:id', authMiddleware, async (req, res) => {
+userRouter.put('/:id', authMiddleware(), async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     try {
@@ -61,7 +61,7 @@ userRouter.put('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-userRouter.delete('/:id', authMiddleware, async (req, res) => {
+userRouter.delete('/:id', authMiddleware(), async (req, res) => {
     const { id } = req.params;
     try {
         if (req.user.id == id) {
@@ -79,7 +79,7 @@ userRouter.delete('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-userRouter.post("/avatar", upload.single("avatar"), authMiddleware, async (req, res) => {
+userRouter.post("/avatar", upload.single("avatar"), authMiddleware(), async (req, res) => {
     try {
         const entity = await userService.updateUser({id: req.user.id, avatarUrl: req.file!.filename});
         return res.status(200).json(entity);

@@ -2,15 +2,13 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import { UPLOAD_PATH } from './config';
 
 dotenv.config();
 
-const SERVER_URL = process.env.SERVER_URL;
-const UPLOADS_DIR = process.env.UPLOADS_DIR;
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, __dirname + `/../${UPLOADS_DIR}`);
+    cb(null, UPLOAD_PATH);
   },
   filename: function (req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -33,24 +31,17 @@ const upload = multer({
   }
 });
 
-const imageFileFilter = (req: any, file: any, cb: any) => {
-  
-  if(file.mimetype === "image/png" || 
-  file.mimetype === "image/jpg"|| 
-  file.mimetype === "image/jpeg"){
-      cb(null, true);
-  }
-  else{
-      cb(null, false);
-  }
-}
-
 export class MulterUtil {
 
   static async deleteImage(fileUrl: string): Promise<void> {
     try {
       // const filePath = path.join(__dirname, fileUrl.split("/").pop()!);
-      const filePath = path.join(...fileUrl.split("/").slice(1));
+      const tmp = fileUrl.split("/");
+      console.log(tmp);
+      const fileName = tmp[tmp.length - 1];
+      console.log(`:file:: ${fileName}`)
+      const filePath = path.join(UPLOAD_PATH, fileName);
+      console.log(`::path:: ${filePath}`)
       if(fs.existsSync(filePath)) {
         fs.unlink(filePath, (err) => {
           if (err) {

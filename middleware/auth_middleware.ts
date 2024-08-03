@@ -15,22 +15,47 @@ export interface AuthenticatedSocket extends Socket {
     user: AuthPayloadContext;
   }
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    if(req.method === 'Options') next();
+// export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+//     if(req.method === 'Options') next();
+
+//     const bearer = req.headers?.authorization?.substring(7);
+
+//     if (bearer == null || bearer == undefined) {
+//         return res.status(401).json({message: "User has not authenticated"});
+//     }
+//     try {
+//       const payload = await JwtService.verifyToken(bearer);
+//       req.user = payload;
+//     } catch(e) {
+//       return res.status(401).json({message: "Failed jwt verify"});
+//     }
+    
+//     next();
+// }
+
+export function authMiddleware(requiredRole?: string) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    if (req.method === 'OPTIONS') next();
 
     const bearer = req.headers?.authorization?.substring(7);
 
-    if (bearer == null || bearer == undefined) {
-        return res.status(401).json({message: "User has not authenticated"});
+    if (!bearer) {
+      return res.status(401).json({ message: "User has not authenticated" });
     }
+
     try {
       const payload = await JwtService.verifyToken(bearer);
       req.user = payload;
-    } catch(e) {
-      return res.status(401).json({message: "Failed jwt verify"});
+
+      if (requiredRole && payload.role !== requiredRole) {
+        return res.status(403).json({ message: "Access denied, insufficient permissions" });
+      }
+
+      next();
+    } catch (e) {
+      return res.status(401).json({ message: "Failed jwt verify" });
     }
-    
-    next();
+  };
 }
 
 export const socketAuthMiddleware = (socket: Socket, next: (err?: ExtendedError | undefined) => void) => {

@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { StageType } from '@prisma/client';
+import { Role, StageType } from '@prisma/client';
 import { stageService } from '../service/stage_service';
+import { authMiddleware } from '../middleware/auth_middleware';
 
 export const sectionRouter = Router();
 
 // Create a new stage
-sectionRouter.post('/stages', async (req: Request, res: Response) => {
+sectionRouter.post('/stages', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const { type, lessonId } = req.body;
     const stage = await stageService.createStage({
@@ -19,7 +20,7 @@ sectionRouter.post('/stages', async (req: Request, res: Response) => {
 });
 
 // Get a stage by ID
-sectionRouter.get('/stages/:id', async (req: Request, res: Response) => {
+sectionRouter.get('/stages/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const stageId = parseInt(req.params.id);
     const stage = await stageService.getStageById(stageId);
@@ -33,7 +34,7 @@ sectionRouter.get('/stages/:id', async (req: Request, res: Response) => {
 });
 
 // Update a stage by ID
-sectionRouter.put('/stages/:id', async (req: Request, res: Response) => {
+sectionRouter.put('/stages/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const stageId = parseInt(req.params.id);
     const stage = await stageService.updateStage(stageId, req.body);
@@ -44,7 +45,7 @@ sectionRouter.put('/stages/:id', async (req: Request, res: Response) => {
 });
 
 // Delete a stage by ID
-sectionRouter.delete('/stages/:id', async (req: Request, res: Response) => {
+sectionRouter.delete('/stages/:id', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const stageId = parseInt(req.params.id);
     await stageService.deleteStage(stageId);

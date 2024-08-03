@@ -25,7 +25,7 @@ class ProfileService {
         })
     }
 
-    async updateProfile(params: ProfileUpdateParams) {
+    async updateProfile(params: Partial<Omit<Profile, "id">>) {
         return await this.prisma.profile.update({
             where: {
                 userId: params.userId
