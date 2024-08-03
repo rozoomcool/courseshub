@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon index.ts",
-    "start": "npx prisma migrate dev --name '.' & npx tsx index.ts",
+    "start": "npx prisma generate & npx prisma migrate dev --name '.' & npx tsx index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
