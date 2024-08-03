@@ -17,10 +17,13 @@ class ProfileService {
         this.prisma = prismaClient
     }
 
-    async saveProfile(params: Partial<Profile>) {
+    async saveProfile(params: Partial<Omit<Profile, "id">>) {
         return await this.prisma.profile.create({
             data: {
-                userId: params.userId!
+                userId: params.userId!,
+                firstname: params.firstname,
+                lastname: params.lastname,
+                surname: params.surname
             }
         })
     }
@@ -34,7 +37,7 @@ class ProfileService {
         })
     }
 
-    async getProfileByUserId(userId: number) {
+    async getProfileByUserId(userId: number): Promise<Profile | null> {
         return await this.prisma.profile.findUnique({
             where: {
                 userId

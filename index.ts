@@ -12,6 +12,7 @@ import cors from "cors";
 import lessonRouter from './controller/lesson_controller';
 import { UPLOAD_PATH } from './config/config';
 import path from 'path';
+import { profileRoute } from './controller/profile_controller';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/sections", sectionRouter);
 app.use("/api/v1/lessons", lessonRouter);
+app.use("/api/v1/profile", profileRoute)
 
 
 setupSocket(io)

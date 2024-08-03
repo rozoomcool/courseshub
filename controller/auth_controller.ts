@@ -12,7 +12,7 @@ authRouter.post('/register', async (req, res) => {
     try {
         const user = req.body as Omit<User, "id"> & Partial<Profile>;
         const created = await userService.createUser(user);
-        user.id = created.id
+        user.userId = created.id
         const profile = await profileService.saveProfile(user)
         return res.status(201).json(created);
     } catch (error) {

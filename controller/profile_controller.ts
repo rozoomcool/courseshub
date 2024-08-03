@@ -8,8 +8,8 @@ export const profileRoute = Router();
 profileRoute.get("/:id", async (req, res) => {
     try {
         const id = Number(req.params.id);
-        const data = profileService.getProfileByUserId(id);
-        return res.status(201).json(data);
+        const data = await profileService.getProfileByUserId(id);
+        return res.status(200).json(data);
     } catch (error) {
         if (error instanceof Error) {
             res.status(400).json({ error: error.message });
