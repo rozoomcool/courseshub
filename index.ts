@@ -29,7 +29,7 @@ const io = new Server(server, {
 
 const corsOptions = {
     origin: '*',
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    // methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true
 }
