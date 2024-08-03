@@ -39,7 +39,7 @@ services:
     networks:
       - mynetwork
     depends_on:
-      - node_app
+      - web
 
 networks:
   mynetwork:
