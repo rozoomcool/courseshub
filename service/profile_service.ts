@@ -17,10 +17,10 @@ class ProfileService {
         this.prisma = prismaClient
     }
 
-    async saveProfile(userId: number) {
+    async saveProfile(params: Partial<Profile>) {
         return await this.prisma.profile.create({
             data: {
-                userId
+                userId: params.userId!
             }
         })
     }
