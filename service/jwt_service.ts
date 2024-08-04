@@ -1,3 +1,4 @@
+import { decodeBase64, encodeBase64 } from 'bcryptjs';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
@@ -9,9 +10,8 @@ const tokenExpiration: number = parseInt(process.env.TOKEN_EXPIRATION as string)
 const refreshTokenExpiration: number = parseInt(process.env.REFRESH_TOKEN_EXPIRATION as string);
 
 export interface AuthPayloadContext {
-    id: number
     username: string,
-    role: string
+    role: {authority: string}[]
 }
 
 export class JwtService {
@@ -28,7 +28,8 @@ export class JwtService {
     
     static async verifyToken (token: string): Promise<AuthPayloadContext> {
         try {
-            return jwt.verify(token, secretKey) as AuthPayloadContext;
+            console.log(secretKey)
+            return jwt.verify(token, Buffer.from(secretKey, "base64"), { algorithms: ['HS256'] }) as AuthPayloadContext;
         } catch(e) {
             console.log(`Failed verify token ${e}`)
             throw Error(`Failed verify token ${e}`)

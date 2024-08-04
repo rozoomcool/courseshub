@@ -1,11 +1,9 @@
 import { AuthenticatedSocket, socketAuthMiddleware } from "../middleware/auth_middleware";
 import { Server, Socket } from "socket.io";
 import { MessageRequest } from "../model/message";
-import { chatService } from "../service/chat_service";
-import { MessageStatus } from "@prisma/client";
 
-const userSocketMap = new Map<number, AuthenticatedSocket>();
-
+const userSocketMap = new Map<string, AuthenticatedSocket>();
+const userMessageMap = new Map<string, MessageRequest[]>();
 
 export const setupSocket = (io: Server) => {    
     io.use(socketAuthMiddleware)
@@ -15,36 +13,36 @@ export const setupSocket = (io: Server) => {
         const authSocket = socket as AuthenticatedSocket;
 
         if (authSocket.user) {
-            userSocketMap.set(authSocket.user.id, authSocket);
+            userSocketMap.set(authSocket.user.username, authSocket);
+            if (userMessageMap.get(authSocket.user.username) && userMessageMap.get(authSocket.user.username)!.length > 0) {
+                const messages = userMessageMap.get(authSocket.user.username)!;
+                messages.forEach((mes) => {
+                    const l_sock = userSocketMap.get(mes.recipient);
+                    if (l_sock?.connected) {
+                        l_sock.emit('private_message', mes)
+                    }
+                });
+            }
             console.log(`User connected: ${authSocket.user.username}`);
         }
         console.log(`User connected: ${authSocket.user?.username}`);
         
         socket.on('private_message', async (messageRequest: MessageRequest) => {
-            const targetSocket = userSocketMap.get(messageRequest.recipientId);
-
-            const chat = await chatService.getChatOrCreate({
-                userOneId: messageRequest.recipientId,
-                userTwoId: authSocket.user.id
-            });
-
-            const message = await chatService.createMessage({
-                senderId: authSocket.user.id,
-                chatId: chat.id,
-                content: messageRequest.content
-            })
+            const targetSocket = userSocketMap.get(messageRequest.recipient);
             
             if (targetSocket?.connected) {
-                const delivered = targetSocket.emit('private_message', message);
-                if (delivered){
-                    authSocket.emit('message_delivered', {messageId: message.id, status: MessageStatus.DELIVERED});
-                    chatService.chageMessageStatus({messageId: message.id, status: MessageStatus.DELIVERED})
+                const delivered = targetSocket.emit('private_message', messageRequest);
+            } else {
+                if(userMessageMap.get(messageRequest.recipient)) {
+                    userMessageMap.set(messageRequest.recipient, userMessageMap.get(messageRequest.recipient)!.concat(messageRequest))
+                } else {
+                    userMessageMap.set(messageRequest.recipient, [messageRequest])
                 }
             }
         });
         
         socket.on('disconnect', async () => {
-            userSocketMap.delete(authSocket.user.id);
+            userSocketMap.delete(authSocket.user.username);
             console.log(`User disconnected: ${(socket as AuthenticatedSocket).user?.username}`);
         });
     });

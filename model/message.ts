@@ -1,12 +1,12 @@
 export interface Message {
     id: number | null
-    senderId: number
-    recipientId: number
+    senderId: string
+    recipientId: string
     content: string
     createdAt: string
 }
 
 export interface MessageRequest {
-    recipientId: number
+    recipient: string
     content: string
 }
