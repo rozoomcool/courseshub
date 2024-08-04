@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 import { MessageRequest } from "../model/message";
 
 const userSocketMap = new Map<string, AuthenticatedSocket>();
-const userMessageMap = new Map<string, MessageRequest[]>();
+const userMessageMap = new Map<string, (MessageRequest & {sender: string})[]>();
 
 export const setupSocket = (io: Server) => {    
     io.use(socketAuthMiddleware)
@@ -31,12 +31,12 @@ export const setupSocket = (io: Server) => {
             const targetSocket = userSocketMap.get(messageRequest.recipient);
             
             if (targetSocket?.connected) {
-                const delivered = targetSocket.emit('private_message', messageRequest);
+                const delivered = targetSocket.emit('private_message', {...messageRequest, sender: authSocket.user.username});
             } else {
                 if(userMessageMap.get(messageRequest.recipient)) {
-                    userMessageMap.set(messageRequest.recipient, userMessageMap.get(messageRequest.recipient)!.concat(messageRequest))
+                    userMessageMap.set(messageRequest.recipient, userMessageMap.get(messageRequest.recipient)!.concat({...messageRequest, sender: authSocket.user.username}))
                 } else {
-                    userMessageMap.set(messageRequest.recipient, [messageRequest])
+                    userMessageMap.set(messageRequest.recipient, [{...messageRequest, sender: authSocket.user.username}])
                 }
             }
         });
