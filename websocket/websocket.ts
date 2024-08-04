@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 import { MessageRequest } from "../model/message";
 
 const userSocketMap = new Map<string, AuthenticatedSocket>();
-const userMessageMap = new Map<string, (MessageRequest & {sender: string})[]>();
+const userMessageMap = new Map<string, (MessageRequest & {sender: string, createdAt: string})[]>();
 
 export const setupSocket = (io: Server) => {    
     io.use(socketAuthMiddleware)
@@ -31,12 +31,12 @@ export const setupSocket = (io: Server) => {
             const targetSocket = userSocketMap.get(messageRequest.recipient);
             
             if (targetSocket?.connected) {
-                const delivered = targetSocket.emit('private_message', {...messageRequest, sender: authSocket.user.username});
+                targetSocket.emit('private_message', {...messageRequest, sender: authSocket.user.username, createdAt: Date().toString()});
             } else {
                 if(userMessageMap.get(messageRequest.recipient)) {
-                    userMessageMap.set(messageRequest.recipient, userMessageMap.get(messageRequest.recipient)!.concat({...messageRequest, sender: authSocket.user.username}))
+                    userMessageMap.set(messageRequest.recipient, userMessageMap.get(messageRequest.recipient)!.concat({...messageRequest, sender: authSocket.user.username, createdAt: Date()}))
                 } else {
-                    userMessageMap.set(messageRequest.recipient, [{...messageRequest, sender: authSocket.user.username}])
+                    userMessageMap.set(messageRequest.recipient, [{...messageRequest, sender: authSocket.user.username, createdAt: Date().toString()}])
                 }
             }
         });
