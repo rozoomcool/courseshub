@@ -6,7 +6,7 @@ import { lessonMediaService } from '../service/lesson_media_service';
 const lessonRouter = express.Router();
 
 // Create a new lesson and add media
-lessonRouter.post('/lessons', upload.array("media", 10), async (req: Request, res: Response) => {
+lessonRouter.post('/lessons', async (req: Request, res: Response) => {
   try {
     const { sectionId, title } = req.body;
     const lesson = await lessonService.createLesson({ sectionId: parseInt(sectionId), title });

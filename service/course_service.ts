@@ -1,4 +1,4 @@
-import { Course, Prisma, PrismaClient, Section } from "@prisma/client";
+import { Course, Lesson, Prisma, PrismaClient, Section, Stage } from "@prisma/client";
 import prisma from '../config/database';
 import { MulterUtil } from "../config/multer_config";
 
@@ -30,6 +30,56 @@ class CourseService {
       }
     });
   }
+  // async createCourseWithContent(
+  //   ownerId: number,
+  //   courseData: Omit<Course, 'id' | 'ownerId'>,
+  //   sectionsData: Array<Omit<Section, 'id' | 'courseId'>>,
+  //   lessonsData: Array<{
+  //     lesson: Omit<Lesson, 'id' | 'sectionId'>,
+  //     stages: Array<Omit<Stage, 'id' | 'lessonId'>>
+  //   }>
+  // ) {
+  //   const result = await this.prisma.$transaction(async (prisma) => {
+  //     const course = await prisma.course.create({
+  //       data: {
+  //         ...courseData,
+  //         ownerId,
+  //       },
+  //     });
+  
+  //     for (const sectionData of sectionsData) {
+  //       const section = await prisma.section.create({
+  //         data: {
+  //           ...sectionData,
+  //           courseId: course.id,
+  //         },
+  //       });
+  
+  //       for (const lessonItem of lessonsData) {
+  //         const lesson = await prisma.lesson.create({
+  //           data: {
+  //             ...lessonItem.lesson,
+  //             sectionId: section.id,
+  //           },
+  //         });
+  
+  //         for (const stageData of lessonItem.stages) {
+  //           await prisma.stage.create({
+  //             data: {
+  //               ...stageData,
+  //               lessonId: lesson.id,
+  //             },
+  //           });
+  //         }
+  //       }
+  //     }
+  
+  //     return course;
+  //   });
+  
+  //   return result;
+  // }
+  
 
   async getCourseById(id: number): Promise<Course | null> {
     return await this.prisma.course.findUnique({
@@ -74,7 +124,7 @@ class CourseService {
         description: params.description ?? oldCourse.description,
         price: params.price ?? oldCourse.price,
         enabled: params.enabled ?? oldCourse.enabled,
-        previewUrl: previewUrl ?? oldCourse.previewUrl
+        previewUrl: previewUrl ?? oldCourse.previewUrl,
       }
     });
   }

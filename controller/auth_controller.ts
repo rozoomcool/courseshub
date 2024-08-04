@@ -28,7 +28,7 @@ authRouter.post('/login', async (req, res) => {
     try {
         const currentUser = await userService.loginUser(req.body as UserModel)
         if(currentUser == null) {
-            return res.status(400);
+            return res.status(404).json("User not found");
         }
         const access = await JwtService.generateAccessToke(omit(currentUser, ["password"]) as AuthPayloadContext);
         const refresh = await JwtService.generateRefreshToken(currentUser.id as number)

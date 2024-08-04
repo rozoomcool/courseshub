@@ -50,6 +50,9 @@ class UserService {
 
     async loginUser(requestUser: UserModel): Promise<UserModel | null> {
         const user = await this.getUserByUsername(requestUser.username);
+        if (user == null) {
+            return null;
+        }
         if (bcrypt.compareSync(requestUser.password, user!.password)) {
             return user as UserModel;
         }

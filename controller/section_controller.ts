@@ -6,17 +6,17 @@ import { authMiddleware } from '../middleware/auth_middleware';
 export const sectionRouter = Router();
 
 // Create a new section
-sectionRouter.post('/sections', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
+sectionRouter.post('/', authMiddleware(Role.TEACHER), async (req: Request, res: Response) => {
   try {
     const section = await sectionService.createSection(req.user.id, req.body);
     res.status(201).json(section);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create section' });
+    res.status(400).json({ error: 'Failed to create section' });
   }
 });
 
 // Get a section by ID
-sectionRouter.get('/sections/:id', async (req: Request, res: Response) => {
+sectionRouter.get('/:id', async (req: Request, res: Response) => {
   try {
     const sectionId = parseInt(req.params.id);
     const section = await sectionService.getSectionById(sectionId);
@@ -30,7 +30,7 @@ sectionRouter.get('/sections/:id', async (req: Request, res: Response) => {
 });
 
 // Update a section by ID
-sectionRouter.put('/sections/:id', async (req: Request, res: Response) => {
+sectionRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const sectionId = parseInt(req.params.id);
     const section = await sectionService.updateSection(sectionId, req.body);
@@ -41,7 +41,7 @@ sectionRouter.put('/sections/:id', async (req: Request, res: Response) => {
 });
 
 // Delete a section by ID
-sectionRouter.delete('/sections/:id', async (req: Request, res: Response) => {
+sectionRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     const sectionId = parseInt(req.params.id);
     await sectionService.deleteSection(sectionId);

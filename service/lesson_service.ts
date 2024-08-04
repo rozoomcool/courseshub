@@ -1,4 +1,4 @@
-import { PrismaClient, Lesson } from '@prisma/client';
+import { PrismaClient, Lesson, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -8,8 +8,8 @@ class LessonService {
     constructor(prismaClient: PrismaClient) {
         this.prisma = prismaClient;
     }
-
-    async createLesson(data: Omit<Lesson, 'id'>): Promise<Lesson> {
+    
+    async createLesson(ownerId: number, lesson: Omit<Lesson, 'id'>): Promise<Lesson> {
         return await this.prisma.lesson.create({
             data,
         });
